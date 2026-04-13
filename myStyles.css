@@ -1,0 +1,52 @@
+body {
+    background-color: #caddf6;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #1e293b;
+    margin: 0;
+    padding: 0;
+}
+
+
+.header {
+    background-color: #2563eb;
+    color: white;
+    padding: 20px;
+    text-align: center;
+}
+
+.content, .jordans, .resume, .video, .tableau {
+    padding: 20px;
+    margin: 15px;
+    background: whitesmoke;
+    border-radius: 10px;
+}
+
+h2 {
+    color: #2563eb;
+}
+
+.shoe {
+    margin-bottom: 20px;
+}
+
+nav {
+    background: #caddf6;
+    padding: 10px;
+    text-align: center;
+}
+
+nav a {
+    color: black;
+    margin: 0 10px;
+    text-decoration: none;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+
+.footer {
+    text-align: center;
+    padding: 20px;
+}

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Joke ↔ Snake Loop 😂🐍</title>
+
+<style>
+    
+    
+    body {
+        font-family: Arial, sans-serif;
+        background: #f4f7fb;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .container {
+        background: white;
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        text-align: center;
+        width: 450px;
+    }
+
+    h1 { margin-bottom: 10px; }
+
+    #setup, #punchline {
+        font-size: 18px;
+        margin: 10px 0;
+        min-height: 30px;
+    }
+
+    button, .back-link {
+        padding: 10px 18px;
+        margin: 6px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+    }
+
+    .generate { background:#2563eb; color:white; }
+    .answer { background:#f59e0b; color:white; display:none; }
+    .funny { background:#22c55e; color:white; display:none; }
+    .lame { background:#ef4444; color:white; display:none; }
+    .back-link { background:#64748b; color:white; }
+
+    #response {
+        margin-top: 10px;
+        font-weight: bold;
+    }
+
+    #gameContainer { display:none; }
+
+    canvas {
+        background: #111827;
+        border-radius: 10px;
+        margin-top: 10px;
+    }
+
+    #scoreboard {
+        margin-top: 8px;
+        font-weight: bold;
+    }
+
+    #gameOverScreen {
+        display: none;
+        font-size: 22px;
+        font-weight: bold;
+        color: #ef4444;
+        margin-top: 15px;
+    }
+
+    /* LAME SCREEN */
+    #lameScreen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.92);
+        color: white;
+        display: none;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        z-index: 999;
+    }
+
+    #lameScreen h1 {
+        font-size: 48px;
+        color: #ef4444;
+    }
+
+    #lameScreen p {
+        font-size: 18px;
+        opacity: 0.8;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="container" id="jokeContainer">
+
+    <h1>Joke Generator 😂 and a Little Suprise🐍 </h1>
+
+    <button class="generate" onclick="generateJoke()">Generate Joke</button>
+
+    <div id="setup"></div>
+    <div id="punchline"></div>
+
+    <button class="answer" id="answerBtn" onclick="showAnswer()">Answer</button>
+
+    <button class="funny" id="funnyBtn" onclick="rateJoke(true)">Funny!!!</button>
+    <button class="lame" id="lameBtn" onclick="rateJoke(false)">Lame!!!</button>
+
+    <div id="response"></div>
+
+    <hr style="margin: 20px 0; border: 0; border-top: 1px solid #eee;">
+    <a href="fromScratch.html" class="back-link">Go Back</a>
+</div>
+
+<div class="container" id="gameContainer">
+    <h1>🐍 Snake Game</h1>
+
+    <canvas id="game" width="300" height="300"></canvas>
+
+    <div id="scoreboard">
+        Score: <span id="score">0</span> | High Score: <span id="highScore">0</span>
+    </div>
+
+    <div id="gameOverScreen">💀 GAME OVER</div>
+</div>
+
+<div id="lameScreen">
+    <h1>You're Lame!!!</h1>
+    <p>not really but you should select funny next time</p>
+</div>
+
+<script>
+const jokes = [
+    { setup:"Why don’t skeletons fight each other?", punchline:"They don’t have the guts." },
+    { setup:"Why did the math book look sad?", punchline:"Because it had too many problems." },
+    { setup:"Why don’t programmers like nature?", punchline:"Too many bugs." },
+    { setup:"What do you call fake spaghetti?", punchline:"An impasta." },
+    { setup:"Why did the scarecrow win an award?", punchline:"Because he was outstanding in his field." }
+];
+
+let currentJoke = null;
+let funnyCount = 0;
+
+/* ---------- JOKES ---------- */
+
+function generateJoke() {
+    const i = Math.floor(Math.random() * jokes.length);
+    currentJoke = jokes[i];
+
+    document.getElementById("setup").innerText = currentJoke.setup;
+    document.getElementById("punchline").innerText = "";
+
+    document.getElementById("answerBtn").style.display = "inline-block";
+    document.getElementById("funnyBtn").style.display = "none";
+    document.getElementById("lameBtn").style.display = "none";
+    document.getElementById("response").innerText = "";
+}
+
+function showAnswer() {
+    document.getElementById("punchline").innerText = currentJoke.punchline;
+
+    document.getElementById("answerBtn").style.display = "none";
+    document.getElementById("funnyBtn").style.display = "inline-block";
+    document.getElementById("lameBtn").style.display = "inline-block";
+}
+
+function rateJoke(isFunny) {
+    const response = document.getElementById("response");
+
+    if (isFunny) {
+        funnyCount++;
+        response.innerText = "😂 Nice!";
+
+        if (funnyCount === 1) {
+            setTimeout(startSnakeGame, 500);
+        }
+
+    } else {
+        showLameScreen();
+    }
+}
+
+/* ---------- LAME SCREEN ---------- */
+
+function showLameScreen() {
+    const screen = document.getElementById("lameScreen");
+    screen.style.display = "flex";
+
+    setTimeout(() => {
+        screen.style.display = "none";
+    }, 5000);
+}
+
+/* ---------- GAME SWITCH ---------- */
+
+function startSnakeGame() {
+    document.getElementById("jokeContainer").style.display = "none";
+    document.getElementById("gameContainer").style.display = "block";
+    document.getElementById("gameOverScreen").style.display = "none";
+
+    startGame();
+}
+
+/* ---------- SNAKE GAME ---------- */
+
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const grid = 15;
+
+let snake, food, dx, dy, loop;
+let score = 0;
+
+let highScore = localStorage.getItem("highScore") || 0;
+document.getElementById("highScore").innerText = highScore;
+
+function startGame() {
+    snake = [{x:150, y:150}];
+    dx = grid;
+    dy = 0;
+    score = 0;
+    updateScore();
+
+    food = spawnFood();
+
+    document.addEventListener("keydown", changeDir);
+
+    clearInterval(loop);
+    loop = setInterval(update, 110);
+}
+
+function update() {
+    const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+
+    head.x = (head.x + canvas.width) % canvas.width;
+    head.y = (head.y + canvas.height) % canvas.height;
+
+    for (let part of snake) {
+        if (head.x === part.x && head.y === part.y) {
+            gameOver();
+            return;
+        }
+    }
+
+    snake.unshift(head);
+
+    if (head.x === food.x && head.y === food.y) {
+        score++;
+        updateScore();
+        food = spawnFood();
+    } else {
+        snake.pop();
+    }
+
+    draw();
+}
+
+function draw() {
+    ctx.fillStyle = "#111827";
+    ctx.fillRect(0,0,300,300);
+
+    // APPLE 🍎
+    ctx.fillStyle = "#ef4444";
+    ctx.beginPath();
+    ctx.arc(food.x + 7, food.y + 7, 6, 0, Math.PI * 2);
+    ctx.fill();
+
+    // SNAKE
+    ctx.fillStyle = "#22c55e";
+    snake.forEach(p => ctx.fillRect(p.x, p.y, grid-1, grid-1));
+}
+
+function spawnFood() {
+    return {
+        x: Math.floor(Math.random()*20)*grid,
+        y: Math.floor(Math.random()*20)*grid
+    };
+}
+
+/* ---------- FIXED DIRECTION LOGIC (RIGHT ARROW FIX) ---------- */
+
+function changeDir(e) {
+    if (e.key === "ArrowUp" && dy === 0) {
+        dx = 0; dy = -grid;
+    } 
+    else if (e.key === "ArrowDown" && dy === 0) {
+        dx = 0; dy = grid;
+    } 
+    else if (e.key === "ArrowLeft" && dx === 0) {
+        dx = -grid; dy = 0;
+    } 
+    else if (e.key === "ArrowRight" && dx === 0) {
+        dx = grid; dy = 0;
+    }
+}
+
+/* ---------- SCORE ---------- */
+
+function updateScore() {
+    document.getElementById("score").innerText = score;
+}
+
+/* ---------- GAME OVER + HIGH SCORE ---------- */
+
+function gameOver() {
+    clearInterval(loop);
+    document.getElementById("gameOverScreen").style.display = "block";
+
+    if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("highScore", highScore);
+        document.getElementById("highScore").innerText = highScore;
+    }
+
+    setTimeout(() => {
+        backToJokes();
+    }, 2500);
+}
+
+function backToJokes() {
+    funnyCount = 0;
+
+    document.getElementById("gameContainer").style.display = "none";
+    document.getElementById("jokeContainer").style.display = "block";
+}
+</script>
+
+</body>
+</html>
